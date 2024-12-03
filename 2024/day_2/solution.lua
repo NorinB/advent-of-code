@@ -13,9 +13,7 @@ end
 
 local reports = get_reports_from_file("input")
 
--- Part 1
-local safe_reports_counter = #reports
-for _, report in pairs(reports) do
+local function is_report_safe(report)
 	local mode = nil
 	local last_number = nil
 	for _, current in pairs(report) do
@@ -29,56 +27,41 @@ for _, report in pairs(reports) do
 		elseif difference > 0 and mode ~= "decreasing" and difference <= 3 then
 			mode = "increasing"
 		else
-			safe_reports_counter = safe_reports_counter - 1
-			break
+      return false
 		end
     last_number = current
 		::continue::
 	end
+  return true
+end
+
+-- Part 1
+local safe_reports_counter = #reports
+for _, report in pairs(reports) do
+  if not is_report_safe(report) then
+    safe_reports_counter = safe_reports_counter - 1
+  end
 end
 
 print("Safe Reports: " .. safe_reports_counter)
 
 
 -- Part 2
-local function is_list_safe_if_dampened(list, last, mode, removed_once)
-  if #list == 0 then
-    return true
-  end
-
-  local current = list[1]
-
-  if last == nil then
-    current = table.remove(list, 1)
-    return is_list_safe_if_dampened(list, current, mode, removed_once)
-  end
-
-  local difference = current - last
-  if (difference < 0 and difference >= -3 and (mode == nil or mode == "decreasing")) or (difference > 0 and difference <= 3 and (mode == nil or mode == "increasing")) then
-    mode = difference < 0 and "decreasing" or "increasing"
-    current = table.remove(list, 1)
-    return is_list_safe_if_dampened(list, current, mode, removed_once)
-  else
-    if removed_once then
-      return false
-    end
-    table.remove(list, 1)
-    return is_list_safe_if_dampened(list, current, mode, true)
-  end
-end
-
 local safe_reports_counter_with_dampener = 0
-local unsafe_counter = 1
 for _, report in pairs(reports) do
-  if is_list_safe_if_dampened(report, nil, nil, false) then
+  if is_report_safe(report) then
     safe_reports_counter_with_dampener = safe_reports_counter_with_dampener + 1
   else
-    local print_debug = ""
+    local index = 1
     for _, number in pairs(report) do
-      print_debug = print_debug .. number .. " "
+      local copied_report = {table.unpack(report)}
+      table.remove(copied_report, index)
+      if is_report_safe(copied_report) then
+        safe_reports_counter_with_dampener = safe_reports_counter_with_dampener + 1
+        break
+      end
+      index = index + 1
     end
-    print(unsafe_counter .. "  " .. print_debug)
-    unsafe_counter = unsafe_counter + 1
   end
 end
 
