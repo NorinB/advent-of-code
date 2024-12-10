@@ -76,7 +76,10 @@ local function get_start_index_for_free_space_for_whole_file(blocks, length_of_f
 				length_of_free_space = length_of_free_space + 1
 				current_index = current_index + 1
 			end
-			if length_of_free_space >= length_of_file and current_index + length_of_file < current_start_of_file then
+			if
+				length_of_free_space >= length_of_file
+				and potential_start_index + length_of_file <= current_start_of_file
+			then
 				return potential_start_index
 			end
 			i = current_index
@@ -134,10 +137,5 @@ end
 file_layout = get_file_layout_from_file()
 move_only_whole_blocks_in_file_(file_layout)
 checksum = calculate_checksum_with_whole_files(file_layout)
-local print_debug = ""
-for _, file in pairs(file_layout) do
-	print_debug = print_debug .. (file.id ~= nil and file.id or ".")
-end
-print(print_debug)
 
 print("Part 2 Checksum of only fully moved files: " .. checksum)
