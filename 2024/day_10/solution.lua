@@ -20,13 +20,9 @@ end
 
 local directions = {
 	{ name = "up", row = -1, column = 0 },
-	-- { name = "upright", row = -1, column = 1 },
 	{ name = "right", row = 0, column = 1 },
-	-- { name = "downright", row = 1, column = 1 },
 	{ name = "down", row = 1, column = 0 },
-	-- { name = "downleft", row = 1, column = -1 },
 	{ name = "left", row = 0, column = -1 },
-	-- { name = "upleft", row = -1, column = -1 },
 }
 
 local function compare_trail_ends(a, b)
@@ -96,13 +92,6 @@ for row = 1, #map do
 				end
 				if not already_exists then
 					table.insert(actual_trails, trail)
-				end
-			end
-
-			for _, trail in pairs(actual_trails) do
-				local print_debug = ""
-				for _, step in pairs(trail) do
-					print_debug = print_debug .. " -> " .. step.row .. " : " .. step.column
 				end
 			end
 			sum_of_trailhead_scores = sum_of_trailhead_scores + #actual_trails
